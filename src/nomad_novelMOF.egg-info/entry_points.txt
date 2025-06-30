@@ -1,0 +1,6 @@
+[nomad.plugin]
+app_entry_point = nomad_novelmof.apps:app_entry_point
+example_upload_entry_point = nomad_novelmof.example_uploads:example_upload_entry_point
+normalizer_entry_point = nomad_novelmof.normalizers:normalizer_entry_point
+novel_mof_schema = nomad_novelmof.schema_packages:novel_mof_schema
+parser_entry_point = nomad_novelmof.parsers:parser_entry_point
