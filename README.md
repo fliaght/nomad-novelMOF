@@ -4,6 +4,16 @@ a novel MOF database
 
 This `nomad` plugin was generated with `Cookiecutter` along with `@nomad`'s [`cookiecutter-nomad-plugin`](https://github.com/FAIRmat-NFDI/cookiecutter-nomad-plugin) template.
 
+
+## Current status
+| Problem | Status            | Description                                                                 |
+|---------|-------------------|-----------------------------------------------------------------------------|
+| schema  | under development | The schema contains the structural, computational and synthesis data of MOF |
+| parser  | undone            | to transfer the uploaded excel and json into the data in nomad              |
+| app     | undone            | app to show schema data                                                     |
+
+
+
 ## Development
 
 If you want to develop locally this plugin, clone the project and in the plugin folder, create a virtual environment (you can use Python 3.10, 3.11 or 3.12):
