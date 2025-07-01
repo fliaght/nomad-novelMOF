@@ -16,3 +16,36 @@ parser_entry_point = NewParserEntryPoint(
     description='New parser entry point configuration.',
     mainfile_name_re=r'.*\.newmainfilename',
 )
+
+
+
+from nomad.config.models.plugins import ParserEntryPoint
+
+
+class MOFArchXLSParserEntryPoint(ParserEntryPoint):
+    """
+    Tandem Parser plugin entry point.
+    """
+
+    def load(self):
+        # lazy import to avoid circular dependencies
+        from nomad_novelmof.parsers.mof_archive_parser import (
+            MOFArchXLSParser,
+        )
+
+        return MOFArchXLSParser(**self.dict())
+
+
+mofarch_xls_parser = MOFArchXLSParserEntryPoint(
+    name='MOFArchXLSParser',
+    description='MOF MOFArch Parser for .xlsx files.',
+    mainfile_name_re=r'.*\.mofarch\.xlsx',
+    # mainfile_content_re='',
+    # mainfile_contents_dict={
+    #     'Master vertical': {
+    #         '__has_all_keys': [
+    #             'Ref. ID temp (Integer starting from 1 and counting upwards)',
+    #         ]
+    #     },
+    # },
+)

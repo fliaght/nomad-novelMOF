@@ -58,19 +58,22 @@ class CoReMOFData(ArchiveSection):
     PLD_angstrom = Quantity( # Changed to include unit in name for clarity
         type=np.float64,
         unit='angstrom', # Å (Angstrom)
-        description="Pore Limiting Diameter (PLD) in Angstroms."
+        description="Pore Limiting Diameter (PLD) in Angstroms.",
+        a_eln=ELNAnnotation(component='NumberEditQuantity'),
     )
 
     ASA_m2_cm3 = Quantity( # Changed to include unit in name for clarity
         type=np.float64,
         unit='m^2/cm^3',
-        description="Accessible Surface Area (ASA) per unit volume."
+        description="Accessible Surface Area (ASA) per unit volume.",
+        a_eln=ELNAnnotation(component='NumberEditQuantity'),
     )
 
     NASA_m2_cm3 = Quantity( # Changed to include unit in name for clarity
         type=np.float64,
         unit='m^2/cm^3',
-        description="Non-Accessible Surface Area (NASA) per unit volume."
+        description="Non-Accessible Surface Area (NASA) per unit volume.",
+        a_eln=ELNAnnotation(component='NumberEditQuantity'),
     )
 
     PV_cm3_g = Quantity( # Changed to include unit in name for clarity
