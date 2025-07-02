@@ -18,7 +18,7 @@ from nomad.config.models.plugins import SchemaPackageEntryPoint
 
 class NovelMOFSchemaEntryPoint(SchemaPackageEntryPoint):
     def load(self):
-        from nomad_novelmof.schema_packages.novelmof_01 import m_package
+        from nomad_novelmof.schema_packages.novelmof_mofarch import m_package
 
         return m_package
 

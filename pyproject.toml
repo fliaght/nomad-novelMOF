@@ -110,7 +110,7 @@ package-dir = { "" = "src" }
 where = ["src"]
 
 [project.entry-points.'nomad.plugin']
-parser_entry_point = "nomad_novelmof.parsers:parser_entry_point"
+novel_mof_parser_entry_point = "nomad_novelmof.parsers:mofarch_json_parser"
 novel_mof_schema = "nomad_novelmof.schema_packages:novel_mof_schema"
 normalizer_entry_point = "nomad_novelmof.normalizers:normalizer_entry_point"
 app_entry_point = "nomad_novelmof.apps:app_entry_point"
