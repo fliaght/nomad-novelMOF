@@ -1,6 +1,12 @@
 from typing import TYPE_CHECKING
 import numpy as np
+from numpy import flexible
+from ase.data import  chemical_symbols
 
+
+from nomad.datamodel.results import (
+    Material
+)
 if TYPE_CHECKING:
     from nomad.datamodel.datamodel import EntryArchive
     from structlog.stdlib import BoundLogger
@@ -25,6 +31,7 @@ class CompositionalInformation(ArchiveSection):
     '''
     metal_types = Quantity(
         type=str,
+        shape=['*'],
         description="Type(s) of metal present in the MOF (e.g., Ga, Dy, Cu).",
     )
 
@@ -34,23 +41,26 @@ class PoreCharacteristics(ArchiveSection):
     Pore characteristics of the MOF structure.
     '''
     PLD_angstrom = Quantity( # Corrected: PLD_angstrom
-        type=np.float64,
+        type=float,
         unit='angstrom',
         description="Pore Limiting Diameter (PLD) in Angstroms.",
     )
     ASA_m2_cm3 = Quantity( # Corrected: ASA_m2_cm3
-        type=np.float64,
+        type=float,
         unit='m**2/cm**3',
+        flexible_units=True,
         description="Accessible Surface Area (ASA) per unit volume.",
     )
     NASA_m2_cm3 = Quantity( # Corrected: NASA_m2_cm3
-        type=np.float64,
+        type=float,
         unit='m**2/cm**3',
+        flexible_units=True,
         description="Non-Accessible Surface Area (NASA) per unit volume.",
     )
     PV_cm3_g = Quantity( # Corrected: PV_cm3_g
-        type=np.float64,
+        type=float,
         unit='cm**3/g',
+        flexible_units=True,
         description="Pore Volume (PV) per unit mass."
     )
 
@@ -108,13 +118,13 @@ class Stability(ArchiveSection):
     Stability information of the MOF.
     '''
     thermal_stability_celsius = Quantity(
-        type=np.float64,
+        type=float,
         unit='celsius',
         description="Thermal stability temperature in degrees Celsius."
     )
 
 
-class CalculationalStructuralPropertiesAndStability(ArchiveSection):
+class CalculationProperties(ArchiveSection):
     '''
     Calculational structural properties and stability of the MOF.
     '''
@@ -147,7 +157,7 @@ class ReferenceData(ArchiveSection):
     Reference data for the MOF, typically publication details.
     '''
     year = Quantity(
-        type=int,
+        type=str,
         description="Year of publication."
     )
     publication = Quantity(
@@ -164,13 +174,18 @@ class SynthesisParameter(ArchiveSection):
     '''
     Parameters used during synthesis.
     '''
+    starting_materials = Quantity(
+        type=str, # Assuming parse_temperature converts to float
+        shape=['*'],
+        description="List of starting materials used in the synthesis (e.g., metal salts, ligands)."
+    )
     temperature = Quantity(
-        type=np.float64, # Assuming parse_temperature converts to float
+        type=float, # Assuming parse_temperature converts to float
         unit="celsius",
         description="Synthesis temperature."
     )
     time = Quantity(
-        type=np.float64, # Assuming parse_time converts to float in hours
+        type=float, # Assuming parse_time converts to float in hours
         unit="hour",
         description="Synthesis time."
     )
@@ -195,21 +210,13 @@ class MOFArchive(Schema):
     A schema describing structural, synthesis, and calculational properties of Metal-Organic Frameworks (MOFs)
     based on the CoReMOF database.
     '''
-    CoReID = Quantity(
-        type=str,
-        description="Unique identifier for the MOF core structure."
-    )
-    CSD_refcode = Quantity(
-        type=str,
-        description="CSD reference code for the MOF."
-    )
     common_name = Quantity(
         type=str,
         description="Common name or abbreviation of the MOF."
     )
-    MOFID_v2 = Quantity(
+    identifier = Quantity(
         type=str,
-        description="MOFid-v2 string for detailed structural identification."
+        description=" identifier string for detailed structural identification."
     )
     transcriber = Quantity(
         type=str,
@@ -220,8 +227,8 @@ class MOFArchive(Schema):
         section_def=CompositionalInformation,
         description="Information about the chemical composition of the MOF."
     )
-    calculational_structural_properties_and_stability = SubSection(
-        section_def=CalculationalStructuralPropertiesAndStability,
+    calculation_properties = SubSection(
+        section_def=CalculationProperties,
         description="Calculated structural properties and stability data."
     )
     structural_data = SubSection(
@@ -237,5 +244,16 @@ class MOFArchive(Schema):
         description="Detailed information about the synthesis of the MOF."
     )
 
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+        if not archive.results.material:
+            archive.results.material = Material()
+        if self.compositional_information.metal_types:
+            for i in self.compositional_information.metal_types:
+                if i not in chemical_symbols:
+                    logger.warning(
+                        message=f'Unknown metal type for {i} in metal_types.'
+                    )
+                archive.results.material.elements += [i]
 
 m_package.__init_metainfo__()
